@@ -1,21 +1,35 @@
-def is_prime val
-	(1..(val/2+1)).each do |divisor|
-		if (val % divisor == 0)
-			return false
+class PrimeGenerator
+	def is_prime? val
+		(2..(val/2+1)).each do |divisor|
+			if (val % divisor == 0)
+				return false
+			end
+		end
+		true
+	end
+
+	def primes
+		i = 1
+		Enumerator.new do |result|
+			while true
+				result.yield i
+				i += 1
+				while (!is_prime? i)
+					i += 1
+				end
+			end
 		end
 	end
-	true
 end
 
 target = 600851475143
-(1..(target/2+1)).each do |val|
-	if target % val == 0 and is_prime val
+primes = PrimeGenerator.new.primes
+begin
+	val = primes.next
+	if target % val == 0
 		answer = val
-		p answer
+		puts "Found factor: #{answer}"
 	end
-	if target % 4005676500 == 0
-		print '='
-	end
-end
+end while val <= target / 2
 
-p answer
+puts "Largest factor is: #{answer}"
